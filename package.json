@@ -6,6 +6,7 @@
   "scripts": {
     "01": "tsx watch src/01",
     "02": "tsx watch src/02",
+    "03": "tsx watch src/03",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
