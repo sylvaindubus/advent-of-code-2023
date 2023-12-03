@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "01": "tsx watch src/01",
+    "02": "tsx watch src/02",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
