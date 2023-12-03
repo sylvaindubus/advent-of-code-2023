@@ -9,6 +9,9 @@
     "03": "tsx watch src/03",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": ">=20.10.0"
+  },
   "author": "",
   "license": "ISC",
   "type": "module",
