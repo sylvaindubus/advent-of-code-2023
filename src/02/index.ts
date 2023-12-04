@@ -7,10 +7,8 @@ const limits = {
 }
 
 const first = (input: string) => {
-  const labelRegex = /^Game (\d+):/
-  const colorRegex = /(\d+) (green|red|blue)/g
-
   return input.split("\n").reduce((sum, line) => {
+    const labelRegex = /^Game (\d+):/
     const res = labelRegex.exec(line)
     if (!res) return sum
     const [label, id] = res
@@ -19,6 +17,7 @@ const first = (input: string) => {
       .split(";")
       .every((set) => {
         let match: RegExpExecArray | null
+        const colorRegex = /(\d+) (green|red|blue)/g
         while ((match = colorRegex.exec(set))) {
           const [_, quantity, color] = match
           if (limits[color] && Number(quantity) > limits[color]) return false
@@ -30,6 +29,25 @@ const first = (input: string) => {
   }, 0)
 }
 
+const second = (input: string) => {
+  return input.split("\n").reduce((sum, line) => {
+    const max = { red: 0, green: 0, blue: 0 }
+    let match: RegExpExecArray | null
+    const colorRegex = /(\d+) (green|red|blue)/g
+    while ((match = colorRegex.exec(line))) {
+      const [_, quantity, color] = match
+      if (quantity > max[color]) {
+        max[color] = Number(quantity)
+      }
+    }
+    const power = Object.values(max)
+      .map(Number)
+      .reduce((power, value) => power * value)
+    return sum + power
+  }, 0)
+}
+
 const input = readFileSync("src/02/input.txt", "utf8")
 
-console.log("🎅 firstResult", first(input)) // 2554 is wrong
+console.log("🎅 firstResult", first(input))
+console.log("🎅 secondResult", second(input))
