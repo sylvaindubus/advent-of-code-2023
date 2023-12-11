@@ -100,27 +100,53 @@ const second = (input: string) => {
 
   const getTile = (pos: Pos) => getMazeTile(maze, pos)
 
-  const loopMap = loop.reduce((map, pos) => {
-    const [x, y] = pos
-    return {
-      ...map,
-      [`${x}-${y}`]: getTile(pos) === "S" ? "J" : getTile(pos),
+  const getStartTile = () => {
+    const first = loop.at(1)
+    const last = loop.at(-2)
+
+    if (!first || !last) {
+      throw new Error("Invalid loop")
     }
-  }, {})
+
+    const [firstX, firstY] = first
+    const [lastX, lastY] = last
+
+    if (firstX === lastX) {
+      return "-"
+    }
+    if (firstY === lastY) {
+      return "|"
+    }
+    if (firstX < lastX && firstY > lastY) {
+      return "J"
+    }
+    if (firstX > lastX && firstY > lastY) {
+      return "7"
+    }
+    if (firstX > lastX && firstY < lastY) {
+      return "F"
+    }
+    return "L"
+  }
+
+  const loopMap = loop.reduce<Map<string, string>>((map, pos) => {
+    const [x, y] = pos
+    map.set(`${x}-${y}`, getTile(pos) === "S" ? getStartTile() : getTile(pos))
+    return map
+  }, new Map())
 
   const isOutsideTop = (pos: Pos) => {
     let count = 0
     const [posX, posY] = pos
     for (let x = posX; x >= 0; x--) {
-      const tile = loopMap[`${x}-${posY}`]
-      if (tile) {
-        if ("JF".includes(tile)) {
-          count += 0.5
-        } else if ("L7".includes(tile)) {
-          count -= 0.5
-        } else if (tile === "-") {
-          count++
-        }
+      const tile = loopMap.get(`${x}-${posY}`)
+      if (!tile) continue
+      if ("JF".includes(tile)) {
+        count += 0.5
+      } else if ("L7".includes(tile)) {
+        count -= 0.5
+      } else if (tile === "-") {
+        count++
       }
     }
     return count % 2 === 0
@@ -130,15 +156,14 @@ const second = (input: string) => {
     let count = 0
     const [posX, posY] = pos
     for (let x = posX + 1; x < maze.length; x++) {
-      const tile = loopMap[`${x}-${posY}`]
-      if (tile) {
-        if ("JF".includes(tile)) {
-          count += 0.5
-        } else if ("L7".includes(tile)) {
-          count -= 0.5
-        } else if (tile === "-") {
-          count++
-        }
+      const tile = loopMap.get(`${x}-${posY}`)
+      if (!tile) continue
+      if ("JF".includes(tile)) {
+        count += 0.5
+      } else if ("L7".includes(tile)) {
+        count -= 0.5
+      } else if (tile === "-") {
+        count++
       }
     }
     return count % 2 === 0
@@ -148,7 +173,8 @@ const second = (input: string) => {
     let count = 0
     const [posX, posY] = pos
     for (let y = posY; y >= 0; y--) {
-      const tile = loopMap[`${posX}-${y}`]
+      const tile = loopMap.get(`${posX}-${y}`)
+      if (!tile) continue
       if ("JF".includes(tile)) {
         count += 0.5
       } else if ("L7".includes(tile)) {
@@ -164,7 +190,8 @@ const second = (input: string) => {
     let count = 0
     const [posX, posY] = pos
     for (let y = posY; y < maze[0].length; y++) {
-      const tile = loopMap[`${posX}-${y}`]
+      const tile = loopMap.get(`${posX}-${y}`)
+      if (!tile) continue
       if ("JF".includes(tile)) {
         count += 0.5
       } else if ("L7".includes(tile)) {
@@ -180,7 +207,7 @@ const second = (input: string) => {
   maze.forEach((row, x) => {
     row.forEach((_, y) => {
       if (x === 0 || x === maze.length - 1 || y === 0 || y === row.length - 1) return
-      if (loopMap[`${x}-${y}`]) return
+      if (loopMap.get(`${x}-${y}`)) return
       if (isOutsideTop([x, y]) || isOutsideBottom([x, y]) || isOutsideLeft([x, y]) || isOutsideRight([x, y])) return
       count++
     })
