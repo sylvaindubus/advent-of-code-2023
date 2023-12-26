@@ -15,6 +15,7 @@
     "09": "tsx watch src/09",
     "10": "tsx watch src/10",
     "11": "tsx watch src/11",
+    "12": "tsx watch src/12",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
